@@ -1,4 +1,5 @@
  # Automação de Sorteio via Chat
+![Fluxo da Automação](imagemAutomação.png)
 Sistema automatizado para cadastro e gerenciamento de participantes em campanhas promocionais via chat.
 
 > ⚠️ Projeto desenvolvido utilizando Telegram, mas totalmente adaptável para WhatsApp via APIs (Z-API, Twilio, etc.)
