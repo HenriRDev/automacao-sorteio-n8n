@@ -1,0 +1,1551 @@
+{
+  "name": "Cadastro sorteio formatura",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        32
+      ],
+      "id": "93d5ca37-9404-4847-bec6-423347a17482",
+      "name": "Telegram Trigger",
+      "webhookId": "fc0e3b06-db1e-439d-863b-0c72d5ac19b4",
+      "credentials": {
+        "telegramApi": {
+          "id": "1sX7WwosVBPs57FK",
+          "name": "Bot sorteio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COALESCE((SELECT COUNT(*) FROM cadastro_formatura WHERE chat_id = '{{ String($json.message.chat.id) }}'), 0) as total, COALESCE((SELECT etapa FROM cadastro_formatura WHERE chat_id = '{{ String($json.message.chat.id) }}'), -1) as etapa, (SELECT nome FROM cadastro_formatura WHERE chat_id = '{{ String($json.message.chat.id) }}') as nome, (SELECT nome_formando FROM cadastro_formatura WHERE chat_id = '{{ String($json.message.chat.id) }}') as nome_formando, (SELECT escola FROM cadastro_formatura WHERE chat_id = '{{ String($json.message.chat.id) }}') as escola, (SELECT nome_responsavel FROM cadastro_formatura WHERE chat_id = '{{ String($json.message.chat.id) }}') as nome_responsavel",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -48,
+        32
+      ],
+      "id": "6c127f2b-34b1-4e76-950a-0a7c61c3d56d",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "T6StdkwKzAhIpYQ3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9dfcd57f-aaaf-4bbb-b28c-f1fc7cfa726b",
+              "leftValue": "={{ String($json.etapa) }}",
+              "rightValue": "5",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        512,
+        176
+      ],
+      "id": "aa13963e-79e2-43cc-990c-bf66b8032424",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Parabens, você já está participando do sorteio! ",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        80
+      ],
+      "id": "dbe009c9-20c6-4f0c-901f-69fb99e6d125",
+      "name": "participandoSorteio",
+      "webhookId": "c833b1fa-acc8-4dc6-a1eb-a916d61a6311",
+      "credentials": {
+        "telegramApi": {
+          "id": "1sX7WwosVBPs57FK",
+          "name": "Bot sorteio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "cadastro_formatura",
+          "mode": "list",
+          "cachedResultName": "cadastro_formatura"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "etapa": 0,
+            "chat_id": "={{ String($('Telegram Trigger').item.json.message.chat.id) }}",
+            "created_at": "={{ $now.format('dd/MM/yy HH:mm:ss') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_formando",
+              "displayName": "nome_formando",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "escola",
+              "displayName": "escola",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_responsavel",
+              "displayName": "nome_responsavel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        528,
+        -448
+      ],
+      "id": "5a3ef34a-8161-4036-a693-be34a463158d",
+      "name": "criaTabela",
+      "credentials": {
+        "postgres": {
+          "id": "T6StdkwKzAhIpYQ3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8a1c621d-72e7-49cb-a155-52654bd0293e",
+              "leftValue": "={{ $json.total }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        160,
+        32
+      ],
+      "id": "44b67283-3ab5-4af6-a652-d4fbd2a62907",
+      "name": "verificaEtapa",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "chatId": "={{ String($('Telegram Trigger').item.json.message.chat.id)}}",
+        "text": "Qual o seu nome?",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        736,
+        -448
+      ],
+      "id": "cba93c5d-c528-4537-bdfd-6b7fbe471144",
+      "name": "nomeUsuario",
+      "webhookId": "7ecf393f-ccfa-4b51-b7ea-9aebb2a9277e",
+      "credentials": {
+        "telegramApi": {
+          "id": "1sX7WwosVBPs57FK",
+          "name": "Bot sorteio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Qual o nome completo do formando(a)?",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        48
+      ],
+      "id": "9b5d7991-b371-4e8b-851c-e3e7f8b46af6",
+      "name": "nomeFormando",
+      "webhookId": "47e92c19-29d9-49c0-8bd4-585a08f1a73c",
+      "credentials": {
+        "telegramApi": {
+          "id": "1sX7WwosVBPs57FK",
+          "name": "Bot sorteio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "cadastro_formatura",
+          "mode": "list",
+          "cachedResultName": "cadastro_formatura"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ String($('Telegram Trigger').item.json.message.chat.id) }}",
+            "nome": "={{ String($('Telegram Trigger').item.json.message.text) }}",
+            "etapa": 1
+          },
+          "matchingColumns": [
+            "chat_id"
+          ],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome_formando",
+              "displayName": "nome_formando",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "escola",
+              "displayName": "escola",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_responsavel",
+              "displayName": "nome_responsavel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1360,
+        48
+      ],
+      "id": "c8c721e1-7dd5-4ac2-9ed6-94b30062ed75",
+      "name": "salvaNomeUsuario",
+      "credentials": {
+        "postgres": {
+          "id": "T6StdkwKzAhIpYQ3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Escola/instituição:",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        208
+      ],
+      "id": "267a9a87-9349-46b8-9949-e778714b6cc8",
+      "name": "escola-instituicao",
+      "webhookId": "ff92969d-0038-469c-9d32-ee13724468d0",
+      "credentials": {
+        "telegramApi": {
+          "id": "1sX7WwosVBPs57FK",
+          "name": "Bot sorteio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Qual o nome completo do responsável?",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        368
+      ],
+      "id": "87ca81ef-066f-4c7a-85c2-7d8fc823bb43",
+      "name": "nomeResponsavel",
+      "webhookId": "bb40f0b2-6fb2-46c5-a9c4-78b9ced09c72",
+      "credentials": {
+        "telegramApi": {
+          "id": "1sX7WwosVBPs57FK",
+          "name": "Bot sorteio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "cadastro_formatura",
+          "mode": "list",
+          "cachedResultName": "cadastro_formatura"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ String($('Telegram Trigger').item.json.message.chat.id) }}",
+            "etapa": 2,
+            "nome_formando": "={{ String($('Telegram Trigger').item.json.message.text) }}"
+          },
+          "matchingColumns": [
+            "chat_id"
+          ],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_formando",
+              "displayName": "nome_formando",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "escola",
+              "displayName": "escola",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_responsavel",
+              "displayName": "nome_responsavel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1360,
+        208
+      ],
+      "id": "9b6ed1dc-2986-46e4-bc66-4f615b9d5bf6",
+      "name": "salvaNomeFormando",
+      "credentials": {
+        "postgres": {
+          "id": "T6StdkwKzAhIpYQ3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "cadastro_formatura",
+          "mode": "list",
+          "cachedResultName": "cadastro_formatura"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ String($('Telegram Trigger').item.json.message.chat.id) }}",
+            "etapa": 3,
+            "escola": "={{ String($('Telegram Trigger').item.json.message.text) }}"
+          },
+          "matchingColumns": [
+            "chat_id"
+          ],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_formando",
+              "displayName": "nome_formando",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "escola",
+              "displayName": "escola",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome_responsavel",
+              "displayName": "nome_responsavel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1360,
+        368
+      ],
+      "id": "5bb4c16f-f40c-4825-a2f8-9d3cd7e95d1d",
+      "name": "salvaInstituicao",
+      "credentials": {
+        "postgres": {
+          "id": "T6StdkwKzAhIpYQ3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Qual o telefone do seu responsável?",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        544
+      ],
+      "id": "65f7c7b2-a581-4d9f-aca0-8ca8aa2dbb92",
+      "name": "telefoneResponsavel",
+      "webhookId": "5b86fa3b-84cd-43e8-9bbf-7aca4d87988d",
+      "credentials": {
+        "telegramApi": {
+          "id": "1sX7WwosVBPs57FK",
+          "name": "Bot sorteio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "cadastro_formatura",
+          "mode": "list",
+          "cachedResultName": "cadastro_formatura"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ String($('Telegram Trigger').item.json.message.chat.id) }}",
+            "etapa": 4,
+            "nome_responsavel": "={{ String($('Telegram Trigger').item.json.message.text) }}"
+          },
+          "matchingColumns": [
+            "chat_id"
+          ],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_formando",
+              "displayName": "nome_formando",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "escola",
+              "displayName": "escola",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_responsavel",
+              "displayName": "nome_responsavel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1360,
+        544
+      ],
+      "id": "2a442749-6223-497f-96f7-d1d58db9bd8f",
+      "name": "salvaNomeResponsavel",
+      "credentials": {
+        "postgres": {
+          "id": "T6StdkwKzAhIpYQ3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "cadastro_formatura",
+          "mode": "list",
+          "cachedResultName": "cadastro_formatura"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ String($('Telegram Trigger').item.json.message.chat.id) }}",
+            "etapa": 5,
+            "telefone": "={{ String($('Telegram Trigger').item.json.message.text) }}"
+          },
+          "matchingColumns": [
+            "chat_id"
+          ],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_formando",
+              "displayName": "nome_formando",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "escola",
+              "displayName": "escola",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nome_responsavel",
+              "displayName": "nome_responsavel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1360,
+        704
+      ],
+      "id": "67d49aef-2fce-4373-82df-4a64c82c50c1",
+      "name": "salvaNumeroResponsavel",
+      "credentials": {
+        "postgres": {
+          "id": "T6StdkwKzAhIpYQ3",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Parabens! seu cadastro foi concluido com sucesso.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1744,
+        704
+      ],
+      "id": "6a4f4925-57ff-4d9b-aaa1-2ae42b736949",
+      "name": "confirmacaoSorteio",
+      "webhookId": "e65b859d-b174-4cd3-bf90-07f71e5a4dfe",
+      "credentials": {
+        "telegramApi": {
+          "id": "1sX7WwosVBPs57FK",
+          "name": "Bot sorteio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14PTb3SiIOgm_LETjwbIhNzPbpfHCm3UgCYcX14J1b5A",
+          "mode": "list",
+          "cachedResultName": "usuariosSorteio",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14PTb3SiIOgm_LETjwbIhNzPbpfHCm3UgCYcX14J1b5A/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14PTb3SiIOgm_LETjwbIhNzPbpfHCm3UgCYcX14J1b5A/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nome": "={{ $('Execute a SQL query').item.json.nome }}",
+            "Nome Formando": "={{ $('Execute a SQL query').item.json.nome_formando }}",
+            "Instituição": "={{ $('Execute a SQL query').item.json.escola }}",
+            "Nome Responsável": "={{ $('Execute a SQL query').item.json.nome_responsavel }}",
+            "Telefone Responsável": "={{ $('Telegram Trigger').item.json.message.text }}",
+            "Horario do cadastro": "={{ $now.format('dd/MM/yy HH:mm:ss') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Horario do cadastro",
+              "displayName": "Horario do cadastro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome Formando",
+              "displayName": "Nome Formando",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Instituição",
+              "displayName": "Instituição",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome Responsável",
+              "displayName": "Nome Responsável",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone Responsável",
+              "displayName": "Telefone Responsável",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1568,
+        704
+      ],
+      "id": "e47fd601-312c-4e76-a44e-5ee1fa410557",
+      "name": "anotaDados",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QjUwXFdjh0HfSYSK",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Etapa verificação\n\nVerifica se o usuário já existe no banco de dados, caso não exista o IF era retornar (seguir caminho) para o campo TRUE, caso ele exista ele ira seguir caminho ao campo FALSE que terá sua propria descrição.\n",
+        "height": 480,
+        "width": 432,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -160
+      ],
+      "id": "be040c4a-57fc-48b6-b43c-955f1b50a5b5",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Cria novo usuário no banco de dados\n",
+        "height": 240,
+        "width": 416,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -512
+      ],
+      "id": "b45eb40a-d413-49ce-84a3-9556f391d1b7",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Verifica se o usuário já completou o cadastro E/OU a etapa que ele se localiza no cadastro\n\nIF: Essa etapa ira verificar se o valor total do usuário é igual a um dos valor de 1 a 5, caso o valor seja igual a 5, ele ira enviar o usuário para o node \"participandoSorteio\" e enviar um mensagem avisando ao usuário que ele já está concorrendo ao premio do sorteio.\nSe o valor for equivalente de 1 a 4, o workflow irá direcionar automaticamente o usuário entre os nodes até que ele finalmente complete o cadastro e seja registrado no banco de dados do workflow. \n",
+        "height": 736,
+        "width": 416,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -208
+      ],
+      "id": "e8ed8ed2-53e1-400b-9dab-e9be811079ff",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Etapa que envia mensagem para o usuário para que ele possa aderir ao sorteio com sucesso\n",
+        "height": 1008,
+        "width": 624,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -48
+      ],
+      "id": "fe439ad8-49f0-4c5e-9946-135abd0e39e1",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "Trigger que aciona/escuta o workflow\n",
+        "height": 480,
+        "width": 176,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        -160
+      ],
+      "id": "40cb4959-55fa-4caa-b197-3770c5cee8af",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ String($json.etapa) }}",
+                    "rightValue": "0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "3b26bc30-22d8-44e8-b8b6-27d923c0f118"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f0152ef0-3bc9-4476-b834-9c1f834007e3",
+                    "leftValue": "={{ String($json.etapa) }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "916ae759-408e-46fe-8d9e-fea15876bb2d",
+                    "leftValue": "={{ String($json.etapa) }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "6ded262c-e8e2-4c5b-a129-23d7b403b8b7",
+                    "leftValue": "={{ String($json.etapa) }}",
+                    "rightValue": "3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2386f943-24c3-4308-83c4-51d1adddeea1",
+                    "leftValue": "={{ String($json.etapa) }}",
+                    "rightValue": "4",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        272
+      ],
+      "id": "0a3fd788-9c36-4aec-8339-e0492c8370bd",
+      "name": "enviaParaEtapa"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "verificaEtapa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "participandoSorteio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "enviaParaEtapa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "criaTabela": {
+      "main": [
+        [
+          {
+            "node": "nomeUsuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "verificaEtapa": {
+      "main": [
+        [
+          {
+            "node": "criaTabela",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "salvaNomeUsuario": {
+      "main": [
+        [
+          {
+            "node": "nomeFormando",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "salvaNomeFormando": {
+      "main": [
+        [
+          {
+            "node": "escola-instituicao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "salvaInstituicao": {
+      "main": [
+        [
+          {
+            "node": "nomeResponsavel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "salvaNomeResponsavel": {
+      "main": [
+        [
+          {
+            "node": "telefoneResponsavel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "salvaNumeroResponsavel": {
+      "main": [
+        [
+          {
+            "node": "anotaDados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "anotaDados": {
+      "main": [
+        [
+          {
+            "node": "confirmacaoSorteio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "enviaParaEtapa": {
+      "main": [
+        [
+          {
+            "node": "salvaNomeUsuario",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "salvaNomeFormando",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "salvaInstituicao",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "salvaNomeResponsavel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "salvaNumeroResponsavel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "America/Sao_Paulo",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 1
+  },
+  "versionId": "1fedda9c-9b45-478e-af2a-91327201e414",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d381ddd265b9703f70f6319a0d24c33a82e2230bd1d1992c3365214d6a032e5c"
+  },
+  "id": "tJEk1GgxAjvSDIOz",
+  "tags": [
+    {
+      "updatedAt": "2026-04-27T16:03:44.063Z",
+      "createdAt": "2026-04-27T16:03:44.063Z",
+      "id": "GN4NN0kLNzVDYTGQ",
+      "name": "Projeto formatura"
+    }
+  ]
+}
