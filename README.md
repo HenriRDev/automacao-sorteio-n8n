@@ -72,13 +72,5 @@ CREATE TABLE cadastro_formatura (
 
 ---
 
-## 💡 Possíveis aplicações
-- Sorteios promocionais
-- Captação de leads
-- Campanhas de marketing
-- Automação de atendimento inicial
-
----
-
 ## 📌 Observação
 Este projeto pode ser facilmente adaptado para outros canais de comunicação e integrado com sistemas externos.
